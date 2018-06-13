@@ -5,6 +5,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
+from keras.utils import plot_model
 
 import csv
 import pickle
@@ -271,6 +272,11 @@ model.compile(loss='categorical_crossentropy',
               optimizer=opt,
               metrics=['accuracy'])
 
+
+plot_model(model, to_file='model.png')
+
+
+
 x_train = x_train.astype('float32')
 x_test = x_test.astype('float32')
 
@@ -278,7 +284,6 @@ x_test = x_test.astype('float32')
 x_train /= 255
 x_test /= 255
 
-## falta arrumar validation
 if not data_augmentation:
     print('Not using data augmentation.')
     model.fit(x_train, y_train,
@@ -310,7 +315,7 @@ else:
                         steps_per_epoch=x_train.shape[0] // batch_size, 
                         epochs=epochs, validation_data=(x_validation, y_validation))
 
-score = model.evaluate(x_test, y_test, show_accuracy=True, verbose=0)
+score = model.evaluate(x_test, y_test, verbose=1)
 print("Resultado do teste final de acerto da rede")
 print(score)
 
