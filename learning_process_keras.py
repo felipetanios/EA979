@@ -111,48 +111,48 @@ for key,value in galaxy_dic.items():
     if value == "L":
         L_galaxy_dic.append(key)
 
-L_x_train_names, L_x_test_names = train_test_split(L_galaxy_dic, test_size=0.4)
+L_x_train_names, L_x_test_names = train_test_split(L_galaxy_dic, test_size=0.3)
 
 SB_galaxy_dic= []
 for key,value in galaxy_dic.items():
     if value == "SB":
         SB_galaxy_dic.append(key)
 
-SB_x_train_names, SB_x_test_names = train_test_split(SB_galaxy_dic, test_size=0.4)
+SB_x_train_names, SB_x_test_names = train_test_split(SB_galaxy_dic, test_size=0.3)
 
 S_galaxy_dic= []
 for key,value in galaxy_dic.items():
     if value == "S":
         S_galaxy_dic.append(key)
 
-S_x_train_names, S_x_test_names = train_test_split(S_galaxy_dic, test_size=0.4)
+S_x_train_names, S_x_test_names = train_test_split(S_galaxy_dic, test_size=0.3)
 
 
-I_galaxy_dic= []
-for key,value in galaxy_dic.items():
-    if value == "I":
-        I_galaxy_dic.append(key)
+# I_galaxy_dic= []
+# for key,value in galaxy_dic.items():
+#     if value == "I":
+#         I_galaxy_dic.append(key)
 
-I_x_train_names, I_x_test_names = train_test_split(I_galaxy_dic, test_size=0.4)
+# I_x_train_names, I_x_test_names = train_test_split(I_galaxy_dic, test_size=0.4)
 
 E_galaxy_dic= []
 for key,value in galaxy_dic.items():
     if value == "E":
         E_galaxy_dic.append(key)
 
-E_x_train_names, E_x_test_names = train_test_split(E_galaxy_dic, test_size=0.4)
+E_x_train_names, E_x_test_names = train_test_split(E_galaxy_dic, test_size=0.3)
 
 
 L_x_validation_names, L_x_test_names = train_test_split(L_x_test_names, test_size=0.5)
 SB_x_validation_names, SB_x_test_names = train_test_split(SB_x_test_names, test_size=0.5)
 S_x_validation_names, S_x_test_names = train_test_split(S_x_test_names, test_size=0.5)
-I_x_validation_names, I_x_test_names = train_test_split(I_x_test_names, test_size=0.5)
+# I_x_validation_names, I_x_test_names = train_test_split(I_x_test_names, test_size=0.5)
 E_x_validation_names, E_x_test_names = train_test_split(E_x_test_names, test_size=0.5)
 
 
-x_train_names = L_x_train_names + SB_x_train_names + S_x_train_names + I_x_train_names + E_x_train_names
-x_test_names = L_x_test_names + SB_x_test_names + S_x_test_names + I_x_test_names + E_x_test_names
-x_validation_names = L_x_validation_names + SB_x_validation_names + S_x_validation_names + I_x_validation_names + E_x_validation_names
+x_train_names = L_x_train_names + SB_x_train_names + S_x_train_names  + E_x_train_names
+x_test_names = L_x_test_names + SB_x_test_names + S_x_test_names  + E_x_test_names
+x_validation_names = L_x_validation_names + SB_x_validation_names + S_x_validation_names + E_x_validation_names
 
 
 #########
