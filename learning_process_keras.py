@@ -333,7 +333,7 @@ else:
     print('Using real-time data augmentation.')
     # This will do preprocessing and realtime data augmentation:
     datagen = ImageDataGenerator(
-        zca_whitening=True,  # apply ZCA whitening
+        zca_whitening=False,  # apply ZCA whitening
         rotation_range=180,  # randomly rotate images in the range (degrees, 0 to 180)
         width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
         height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
