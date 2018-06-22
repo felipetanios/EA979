@@ -4,7 +4,7 @@ Projeto de Classificador de Galaxias para disciplina EA 979
 
 Bibliotecas utilizadas
 
-Pytorch, Torchsample, Tensorflow, Keras, Numpy, CSV, Pickle, OS, Imagio, Glob, TQDM, SciPy, Scikit-learn, MatPlotLib, Pandas
+Pytorch, Torchsample, Tensorflow, Keras, Numpy, CSV, Pickle, OS, Imagio, Glob, TQDM, SciPy, Scikit-learn, MatPlotLib, Pandas, Nibabel, Graphviz, Pydot, OpenCV
 
 Para instalar Torchsample use
 ```

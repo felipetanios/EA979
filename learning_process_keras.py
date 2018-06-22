@@ -255,7 +255,7 @@ print(y_test.shape[0], 'test samples')
 
 
 model = Sequential()
-model.add(ZeroPadding2D((1,1), batch_input_shape = (64,224,224,3),data_format='channels_last'))
+model.add(ZeroPadding2D((1,1), input_shape=x_train.shape[1:],data_format='channels_last'))
 model.add(Convolution2D(64, (3,3), activation='relu',data_format='channels_last'))
 model.add(ZeroPadding2D((1,1),data_format='channels_last'))
 model.add(Convolution2D(64, (3,3), activation='relu',data_format='channels_last'))
