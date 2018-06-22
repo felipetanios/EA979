@@ -229,7 +229,7 @@ y_test = labels_test
 #O numero de passos vai ser len(x_train)/(batch_size)
 batch_size = 64 #numero de amostras por gradiente
 num_classes = number_of_labels # numero de classes do cifar10
-epochs = 1 #numero de epocas para treinar o modelo
+epochs = 40 #numero de epocas para treinar o modelo
 data_augmentation = True
 
 
