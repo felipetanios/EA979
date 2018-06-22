@@ -1,12 +1,12 @@
 from __future__ import print_function
 import keras
-from keras.datasets import cifar10
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+from keras.layers.core import Flatten, Dense, Dropout
+from keras.layers.convolutional import Convolution2D, MaxPooling2D, ZeroPadding2D
 from keras.utils import plot_model
 
+import cv2
 import csv
 import pickle
 import os
@@ -17,6 +17,7 @@ import glob
 from tqdm import tqdm
 import dictionary
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix
 
 
 #################################
@@ -101,6 +102,8 @@ number_of_labels = len(label_dic.keys())
 
 
 
+
+
 #########
 #Separating all set into single type subset
 #Separating in train, validation and test
@@ -128,12 +131,12 @@ for key,value in galaxy_dic.items():
 S_x_train_names, S_x_test_names = train_test_split(S_galaxy_dic, test_size=0.3)
 
 
-# I_galaxy_dic= []
-# for key,value in galaxy_dic.items():
-#     if value == "I":
-#         I_galaxy_dic.append(key)
+I_galaxy_dic= []
+for key,value in galaxy_dic.items():
+    if value == "I":
+        I_galaxy_dic.append(key)
 
-# I_x_train_names, I_x_test_names = train_test_split(I_galaxy_dic, test_size=0.4)
+I_x_train_names, I_x_test_names = train_test_split(I_galaxy_dic, test_size=0.4)
 
 E_galaxy_dic= []
 for key,value in galaxy_dic.items():
@@ -146,17 +149,17 @@ E_x_train_names, E_x_test_names = train_test_split(E_galaxy_dic, test_size=0.3)
 L_x_validation_names, L_x_test_names = train_test_split(L_x_test_names, test_size=0.5)
 SB_x_validation_names, SB_x_test_names = train_test_split(SB_x_test_names, test_size=0.5)
 S_x_validation_names, S_x_test_names = train_test_split(S_x_test_names, test_size=0.5)
-# I_x_validation_names, I_x_test_names = train_test_split(I_x_test_names, test_size=0.5)
+I_x_validation_names, I_x_test_names = train_test_split(I_x_test_names, test_size=0.5)
 E_x_validation_names, E_x_test_names = train_test_split(E_x_test_names, test_size=0.5)
 
 
-x_train_names = L_x_train_names + SB_x_train_names + S_x_train_names  + E_x_train_names
-x_test_names = L_x_test_names + SB_x_test_names + S_x_test_names  + E_x_test_names
-x_validation_names = L_x_validation_names + SB_x_validation_names + S_x_validation_names + E_x_validation_names
+x_train_names = L_x_train_names + SB_x_train_names + S_x_train_names  + E_x_train_names + I_x_train_names
+x_test_names = L_x_test_names + SB_x_test_names + S_x_test_names  + E_x_test_names + I_x_test_names
+x_validation_names = L_x_validation_names + SB_x_validation_names + S_x_validation_names + E_x_validation_names + I_x_validation_names
 
 
 #########
-#Gathering Train and Test Features
+#Gathering Train, Test and Validation Features
 #########
 
 i = 0
@@ -167,39 +170,48 @@ labels_train = []
 labels_test = []
 labels_validation = []
 
+
+
 for path_to_image in tqdm(glob.glob("./images/png-grey/*.png")):
     # print(path_to_image[18:-4])
     name = path_to_image[18:-4]
+    name_to_open = './images/png-grey/' + path_to_image[18:]
+
     if name in x_train_names:
-      im = imageio.imread(path_to_image)
-      features_train.append(im)
-      # label_train = [0]*number_of_labels
-      idx = label_dic[galaxy_dic[name]]
-      label_train = idx
-      labels_train.append(label_train)
+    	im = cv2.resize(cv2.imread(name_to_open), (224, 224)).astype(np.float32)
+    	#im = im.transpose((2,0,1))
+    	# im = np.expand_dims(im, axis=0)
+    	features_train.append(im)
+    	idx = label_dic[galaxy_dic[name]]
+    	label_train = idx
+    	labels_train.append(label_train)
 
 
     if name in x_test_names:
-      im = imageio.imread(path_to_image)
-      features_test.append(im)
-      # label_test = [0]*number_of_labels
-      idx = label_dic[galaxy_dic[name]]
-      label_test = idx
-      labels_test.append(label_test)
+    	im = cv2.resize(cv2.imread(name_to_open), (224, 224)).astype(np.float32)
+    	#im = im.transpose((2,0,1))
+    	# im = np.expand_dims(im, axis=0)
+    	features_test.append(im)
+    	idx = label_dic[galaxy_dic[name]]
+    	label_test = idx
+    	labels_test.append(label_test)
 
     if name in x_validation_names:
-      im = imageio.imread(path_to_image)
-      features_validation.append(im)
-      # label_test = [0]*number_of_labels
-      idx = label_dic[galaxy_dic[name]]
-      label_validation = idx
-      labels_validation.append(label_validation)
+    	im = cv2.resize(cv2.imread(name_to_open), (224, 224)).astype(np.float32)
+    	#im = im.transpose((2,0,1))
+    	# im = np.expand_dims(im, axis=0)
+    	features_validation.append(im)
+    	idx = label_dic[galaxy_dic[name]]
+    	label_validation = idx
+    	labels_validation.append(label_validation)
+
+
 
 features_train = np.array(features_train)
 features_test = np.array(features_test)
 features_validation = np.array(features_validation)
-# labels_train = np.array(labels_train)
-# labels_test = np.array(labels_test)
+labels_train = np.array(labels_train)
+labels_test = np.array(labels_test)
 
 
 x_train = features_train
@@ -210,17 +222,16 @@ y_validation = labels_validation
 y_test = labels_test
 
 
-#O numero de passos vai ser 50000/(batch_size)
+#########
+#Defining Learning arguments
+#########
+
+#O numero de passos vai ser len(x_train)/(batch_size)
 batch_size = 64 #numero de amostras por gradiente
 num_classes = number_of_labels # numero de classes do cifar10
-epochs = 20 #numero de epocas para treinar o modelo
+epochs = 1 #numero de epocas para treinar o modelo
 data_augmentation = False
 
-# # The data, shuffled and split between train and test sets:
-# (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-
-
-## CHANGE TO APPEND FROM DICTIONARY
 
 print('x_train shape:', x_train.shape)
 print(x_train.shape[0], 'train samples')
@@ -232,33 +243,60 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 y_validation = keras.utils.to_categorical(y_validation, num_classes)
 
 
-
 print('y_train shape:', y_train.shape)
 # print ('size of first dimention ', y_train[0][0])
 print(y_train.shape[0], 'train samples')
 print(y_test.shape[0], 'test samples')
 
+
+#########
+#Defining Network (VGG16z)
+#########
+
+
 model = Sequential()
+model.add(ZeroPadding2D((1,1), batch_input_shape = (64,224,224,3),data_format='channels_last'))
+model.add(Convolution2D(64, (3,3), activation='relu',data_format='channels_last'))
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(64, (3,3), activation='relu',data_format='channels_last'))
+model.add(MaxPooling2D((2,2), strides=(2,2),data_format='channels_last'))
 
-#primeira mascara de convolucao
-model.add(Conv2D(64, (5, 5), padding='same',
-                 input_shape=x_train.shape[1:]))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(128, (3,3), activation='relu',data_format='channels_last'))
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(128, (3,3), activation='relu',data_format='channels_last'))
+model.add(MaxPooling2D((2,2), strides=(2,2),data_format='channels_last'))
 
-# segunda mascara de convolucao
-model.add(Conv2D(64, (5, 5), padding='same'))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(256, (3,3), activation='relu',data_format='channels_last'))
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(256, (3,3), activation='relu',data_format='channels_last'))
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(256, (3,3), activation='relu',data_format='channels_last'))
+model.add(MaxPooling2D((2,2), strides=(2,2),data_format='channels_last'))
+
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(512, (3,3), activation='relu',data_format='channels_last'))
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(512, (3,3), activation='relu',data_format='channels_last'))
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(512, (3,3), activation='relu',data_format='channels_last'))
+model.add(MaxPooling2D((2,2), strides=(2,2),data_format='channels_last'))
+
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(512, (3,3), activation='relu',data_format='channels_last'))
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(512, (3,3), activation='relu',data_format='channels_last'))
+model.add(ZeroPadding2D((1,1),data_format='channels_last'))
+model.add(Convolution2D(512, (3,3), activation='relu',data_format='channels_last'))
+model.add(MaxPooling2D((2,2), strides=(2,2),data_format='channels_last'))
 
 model.add(Flatten())
-model.add(Dense(512))
-model.add(Activation('relu'))
+model.add(Dense(4096, activation='relu'))
 model.add(Dropout(0.5))
-model.add(Dense(num_classes))
-model.add(Activation('softmax'))
+model.add(Dense(4096, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(num_classes, activation='softmax'))
 
 
 
@@ -318,6 +356,9 @@ else:
 score = model.evaluate(x_test, y_test, verbose=1)
 print("Resultado do teste final de acerto da rede")
 print(score)
+
+
+
 
 #keras get_layer: retorna a layer: podemos usar para ver o estado final dos filtros usados (ja que sao 5x5)
 #visualize single neuron ->> output para apresentação
